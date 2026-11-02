@@ -1,0 +1,13 @@
+NYC GESTÃO V21.1 — INÍCIO E PAGAMENTOS
+
+INICIAR: extraia o ZIP para uma pasta normal e execute INICIAR_SISTEMA\INICIAR.bat. Confira o caminho do banco antes de preparar ou iniciar.
+
+ATUALIZAR: faça uma cópia de segurança e siga documentacao\ATUALIZAR_PARA_V21_1.txt. Mantenha a pasta antiga até confirmar os dados na nova instalação.
+
+VERSÃO ANTIGA ABERTA: a Central V21.1 verifica a versão da API. Se encontrar um servidor antigo na porta 8000, ela avisa e não abre essa tela como se fosse V21.1. Use “Parar sistema” na Central antiga ou feche o terminal que iniciou o servidor. Fechar apenas a aba do navegador não encerra o servidor.
+
+PRIMEIRO ACESSO: em “Contas e acessos”, crie o primeiro Proprietário. Não existe senha padrão; a senha temporária é exibida uma vez.
+
+PIX: cada empresa guarda sua configuração separadamente. Mercado Pago pode confirmar por API quando a conta estiver configurada; outros bancos ficam em conferência manual. Consulte os guias da pasta documentacao.
+
+Não apague o banco, backend\.env, backend\.session-key nem dados\backups antes de confirmar que a atualização manteve seus registros.

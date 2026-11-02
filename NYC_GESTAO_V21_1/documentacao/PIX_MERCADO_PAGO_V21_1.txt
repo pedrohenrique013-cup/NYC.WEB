@@ -1,0 +1,39 @@
+PIX DO MERCADO PAGO — V21.1
+
+O que esta versão faz
+- Em cada empresa, o administrador pode escolher Mercado Pago e salvar o Access Token privado da própria conta.
+- O token é criptografado no banco e nunca é enviado de volta à tela. A chave local do sistema protege a criptografia.
+- No caixa, o operador informa o e-mail do pagador. O sistema cria uma cobrança PIX Orders API, mostra QR Code e Copia e Cola e consulta o pedido a cada cinco segundos.
+- A venda e a baixa do estoque só acontecem quando a API devolve status=processed e status_detail=accredited, e os valores da order e da transação PIX são iguais ao valor esperado.
+- Pedidos pendentes não registram venda. A mesma tentativa reutiliza a chave de idempotência; falha de rede pode ser consultada sem gerar uma nova cobrança.
+- Se Mercado Pago estiver selecionado sem Access Token, uma chave estática cadastrada ainda pode gerar QR em modo manual, preservando o fluxo anterior.
+- As outras instituições continuam em conferência manual, por empresa. Selecionar um banco não concede acesso à API dele.
+
+Como configurar
+1. Selecione a empresa e abra Configurações > APIs de pagamento por loja > Configurar API / PIX desta loja.
+2. Escolha Mercado Pago.
+3. No painel de desenvolvedores do Mercado Pago, obtenha o Access Token privado da aplicação e do ambiente que pretende usar. Não use Public Key neste campo.
+4. Cole o token no campo protegido e salve. Para testar, use primeiro uma credencial de teste; uma credencial de produção cria cobranças reais.
+5. No caixa, escolha PIX, informe o e-mail do pagador e gere a cobrança. A tela mostra o status retornado pela API.
+
+Não envie Access Token, senha, certificado ou segredo por conversa. Não inclua credenciais em capturas de tela ou chamados. Se já compartilhou uma credencial completa, revogue-a/renove-a pelo painel do Mercado Pago e substitua-a nas configurações.
+
+Segurança, limites e recuperação
+- A API é chamada pelo backend da própria instalação. O token não fica no JavaScript nem no navegador após salvar.
+- O arquivo backend/.session-key e o banco devem permanecer juntos nos backups. Se a chave local for apagada, o token salvo não poderá ser descriptografado; cadastre-o novamente.
+- Não troque o Access Token enquanto houver cobranças ativas dessa loja. O sistema bloqueia a troca quando já conhece os pedidos pendentes. Se a criação ficou sem resposta do provedor, mantenha a mesma conta do Mercado Pago ao tentar novamente.
+- A instalação roda localmente e consulta o pedido por polling. Não há webhook nesta versão, porque um webhook do Mercado Pago precisa de endpoint HTTPS público. A consulta é feita no servidor; se a máquina estiver desligada, a confirmação será retomada quando o sistema voltar e consultar o pedido.
+- O nome/e-mail do pagador e o rascunho da venda ficam criptografados no registro da cobrança para permitir recuperação idempotente após falhas de rede.
+- Se o Mercado Pago confirmar o recebimento, mas o estoque ou os dados da venda não puderem ser confirmados, o sistema bloqueia a venda e exibe “PIX creditado, mas a venda requer ajuste no sistema”. Um administrador deve revisar o pedido antes de continuar.
+- Esta integração é específica do Mercado Pago. Nubank, Inter, C6, Itaú, Bradesco e demais bancos ainda usam conferência manual até cada conta ter API habilitada e integração própria.
+
+Interpretação do exemplo enviado
+- action_required / waiting_transfer quer dizer que o pagador ainda deve transferir o dinheiro; não confirma recebimento.
+- Só processed / accredited significa que o pedido foi processado e o crédito foi confirmado.
+- O exemplo enviado também tem total_amount=100.00 e transação amount=50.00. Esse par de valores não passaria na validação de igualdade e não poderia concluir uma venda nesta integração.
+
+Fontes oficiais
+- Pix e Orders API: https://www.mercadopago.com.br/developers/pt/docs/checkout-api-orders/payment-integration/websites/pix
+- Estados da order: https://www.mercadopago.com.br/developers/pt/docs/checkout-api-orders/payment-management/status/order-status
+- Access Token e segurança: https://www.mercadopago.com.br/developers/pt/docs/checkout-api-orders/resources/credentials
+- Webhooks e assinatura: https://www.mercadopago.com.br/developers/en/docs/links-and-debts/additional-content/your-integrations/notifications/webhooks

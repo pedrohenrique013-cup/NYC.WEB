@@ -1,0 +1,19 @@
+CONFIGURAR API DE PAGAMENTO POR LOJA — V21.1
+
+Onde encontrar
+1. Entre no sistema com o administrador da empresa.
+2. Abra Configurações.
+3. Na área “APIs de pagamento por loja”, confira o nome da empresa selecionada.
+4. Clique “Configurar API / PIX desta loja”.
+5. Escolha Mercado Pago e informe o Access Token privado da conta dessa empresa.
+6. Salve. O status da área principal será atualizado para mostrar que o token foi salvo.
+
+Cada cadastro fica separado pelo identificador da empresa. Ao entrar em outra empresa, a tela mostra a situação das credenciais dela. Repita o cadastro com o token daquela conta; não reutilize a credencial de outra loja.
+
+O campo pede o Access Token privado, não a Public Key nem uma URL da API. O endereço oficial já está configurado no sistema. O token é enviado ao backend, criptografado no banco e nunca devolvido ao navegador. Deixe o campo vazio para manter o token já salvo. Para remover a credencial, marque “Apagar o token salvo desta empresa”.
+
+O estado “Token salvo” confirma que há uma credencial armazenada, mas não testa a conta. A validação acontece quando a primeira cobrança é criada. Use primeiro uma credencial de teste. Uma credencial de produção pode gerar cobranças reais.
+
+Mercado Pago é o único banco com cobrança e confirmação automática implementadas nesta versão. Escolher Nubank, Inter, C6, Itaú, Bradesco ou outro banco deixa a empresa em modo manual; não cole credenciais de APIs ainda não integradas.
+
+Consulte também `PIX_MERCADO_PAGO_V21_1.txt` para o fluxo de cobrança, status e segurança, e `ATUALIZAR_PARA_V21_1.txt` para preservar banco e configurações ao atualizar.

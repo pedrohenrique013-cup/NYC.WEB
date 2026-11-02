@@ -1,0 +1,37 @@
+{
+  "version": "21.1",
+  "focus": "Identificação da versão ativa, bloqueio de servidor antigo e distribuição local sem arquivos obsoletos",
+  "changes": [
+    {
+      "file": "INICIAR_SISTEMA/central.py",
+      "description": "A Central só aceita e abre a API V21.1. Um servidor antigo é identificado com orientação para encerrá-lo; a Central não mata processos externos nem toca nos dados."
+    },
+    {
+      "file": "INICIAR_SISTEMA/central.html",
+      "description": "A tela mostra V21.1 e apresenta aviso destacado quando encontra outra versão na porta local."
+    },
+    {
+      "file": "backend/app/main.py",
+      "description": "Versão da API atualizada para 21.1.0."
+    },
+    {
+      "file": "web/index.html e web/app.js",
+      "description": "Marcadores e rodapé da interface alinhados com V21.1; cache dos arquivos atualizado."
+    },
+    {
+      "file": "web/controle.html e web/controle-v21.css",
+      "description": "Título e arquivo de estilo do painel /controle alinhados com V21.1."
+    },
+    {
+      "file": "projeto",
+      "description": "Pacote local enxuto: removidos arquivos históricos, prévias, estilos sem uso, launchers redundantes e componentes fora do inicializador."
+    }
+  ],
+  "validation": {
+    "previous_v21_0_focused_pix_tests": "5 passaram antes desta revisão",
+    "v21_1_functional_tests": "não executados nesta revisão",
+    "live_payment_request": "não realizado; a credencial estava mascarada",
+    "full_legacy_test_suite": "na versão anterior não iniciou por ausência de httpx2",
+    "zip_integrity": "validada após geração"
+  }
+}

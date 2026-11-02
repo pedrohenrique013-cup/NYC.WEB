@@ -1,0 +1,14 @@
+ATUALIZAR PARA V21.1 SEM PERDER OS DADOS
+
+O ZIP V21.1 contém o programa, mas não carrega banco de dados, `.env` ou chaves locais. Isso evita substituir seus dados e segredos por cópias da máquina de desenvolvimento.
+
+1. Na instalação atual, faça uma cópia de segurança. Pare o sistema pela Central antiga (botão “Parar sistema”) e confirme que o servidor foi encerrado.
+2. Descompacte V21.1 em uma pasta nova.
+3. Se quiser continuar com a mesma empresa, usuários, produtos e vendas, copie da instalação anterior para a pasta V21.1 os arquivos existentes `backend/nycweb_v2.db` e `backend/.env`.
+4. Copie também `backend/.session-key` quando existir. Ela mantém válidos os tokens PIX criptografados e evita trocar a chave de sessão local.
+5. Abra `INICIAR_SISTEMA/INICIAR.bat` na pasta V21.1. Na primeira inicialização, a migração adiciona as estruturas necessárias sem apagar as tabelas existentes.
+6. Confirme que empresas, produtos e vendas estão visíveis antes de continuar. Mantenha a cópia de segurança até essa conferência.
+
+Se a instalação usa PostgreSQL ou outro `DATABASE_URL`, preserve o `.env` correspondente em vez de substituir por uma cópia diferente. Não copie arquivos de banco de dados enquanto o servidor estiver aberto.
+
+Quando uma empresa for usar Mercado Pago, escolha a empresa correta e use Configurações > APIs de pagamento por loja > Configurar API / PIX desta loja. Salve o Access Token privado da conta correspondente. A chave estática e a configuração por empresa continuam disponíveis para conferência manual.

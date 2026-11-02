@@ -1,0 +1,15 @@
+NYC Gestão V21.1 — registro de verificações
+
+Mudanças desta revisão
+- A Central compara a versão informada pela API com 21.1.0. Se detectar uma versão anterior, avisa e não abre o sistema antigo como se fosse o atual.
+- O rodapé do sistema, o painel /controle, a Central e os arquivos de início mostram V21.1.
+- O pacote inclui apenas os componentes da instalação local usados pela Central. Foram retirados guias históricos, prévias visuais, folhas de estilo sem referência, launchers duplicados, testes avulsos e o aplicativo móvel separado.
+- O ZIP não leva banco, credenciais nem arquivos locais de sessão.
+
+Histórico da versão V21.0
+- Cinco testes focados de PIX passaram antes desta revisão.
+- Compilação Python e sintaxe JavaScript passaram antes desta revisão.
+- Não houve cobrança real: a credencial enviada anteriormente estava mascarada.
+- A suíte antiga completa não iniciou no ambiente usado porque faltava a dependência httpx2.
+
+Esta revisão V21.1 não teve testes funcionais reexecutados. A integridade do arquivo ZIP foi verificada; a proteção de versão foi revisada no código, mas precisa ser confirmada na instalação local ao reiniciar o sistema.

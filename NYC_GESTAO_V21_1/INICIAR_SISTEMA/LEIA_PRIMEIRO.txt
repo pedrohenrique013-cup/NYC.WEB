@@ -1,0 +1,12 @@
+NYC Gestão V21.1 — Central de inicialização
+
+1. Extraia o ZIP inteiro para uma pasta normal.
+2. Abra esta pasta e execute INICIAR.bat. O computador precisa do Python 3.12 de 64 bits; na primeira vez, mantenha a internet conectada.
+3. Confira o caminho do banco na Central. Não prepare uma base vazia se esta instalação deve continuar dados existentes.
+4. Para uma instalação nova, prepare a base e crie o primeiro Proprietário em “Contas e acessos”.
+5. Para manter dados de outra instalação, siga documentacao/ATUALIZAR_PARA_V21_1.txt.
+6. Inicie o sistema pela Central e mantenha a janela aberta durante o uso.
+
+Se a Central mostrar que há um servidor antigo, use “Parar sistema” na Central antiga ou feche a janela/terminal que o iniciou. Fechar apenas o navegador não libera a porta 8000. A Central não encerra nem altera um servidor que não iniciou.
+
+Pastas: INICIAR_SISTEMA (início), backend (API e acessos), web (telas), documentacao (guias). A Central cria dados/backups e logs quando necessário.

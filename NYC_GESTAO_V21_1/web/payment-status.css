@@ -1,0 +1,9 @@
+.pix-manual-status{display:grid;gap:8px;margin:13px 0;padding:14px;border:1px solid #e7c77f;border-radius:12px;background:#fff8e8;color:#674d18;font-size:13px;line-height:1.55}
+.pix-manual-status strong{color:#795400;font-size:12px;letter-spacing:.03em}
+.pix-manual-receipt{padding:11px 13px;border-left:4px solid #c18e1e;border-radius:6px;background:#fff8e8;color:#654b17;font-size:13px;line-height:1.5}
+.pix-mp-area{display:grid;gap:12px;margin:12px 0}
+.pix-mp-status{padding:12px 14px;border:1px solid #9bd7c6;border-radius:12px;background:#effaf6;color:#15503f;font-weight:700;line-height:1.5}
+.pix-mp-message{padding:10px 12px;border-radius:10px;background:#f4f7fb;color:#365066;font-size:13px;line-height:1.55}
+.pix-mp-qr{display:block;width:260px;max-width:100%;margin:0 auto;image-rendering:auto}
+.pix-mp-copy{width:100%;min-height:96px;padding:10px;border:1px solid #c8d7e2;border-radius:10px;font:12px/1.45 monospace;overflow-wrap:anywhere}
+.pix-mp-clear{display:flex;gap:9px;align-items:center}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYC Gestão — Contas e acessos · V21.1</title>
+  <style>
+    :root{color-scheme:light;--ink:#183c34;--muted:#62766f;--green:#175344;--line:#dce7e1;--paper:#fff;--wash:#f1f6f3;--accent:#e7f3ed;--red:#a33030}
+    *{box-sizing:border-box}body{margin:0;background:var(--wash);font:15px/1.45 "Segoe UI",Arial,sans-serif;color:#20352f}
+    header{background:var(--green);color:white;padding:26px max(22px,calc((100% - 1180px)/2));box-shadow:0 4px 16px #113d3020}
+    header h1{font-size:25px;margin:0 0 3px}header p{margin:0;color:#d5e8e0}
+    main{max-width:1180px;margin:22px auto;padding:0 18px 38px}
+    .grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:16px;align-items:start}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 6px 24px #1a443411;margin-bottom:16px}
+    .card h2{font-size:18px;color:var(--ink);margin:0 0 14px}.card h3{font-size:15px;color:var(--ink);margin:16px 0 8px}
+    .muted{color:var(--muted);font-size:13px}.notice{background:var(--accent);border:1px solid #cee4d8;border-radius:10px;padding:12px 14px;margin-bottom:16px}
+    .warning{background:#fff7e6;border-color:#f0dfa8}.error{color:var(--red);font-weight:600}.success{color:#17623e;font-weight:600}
+    .database-path{font-family:Consolas,monospace;font-size:13px;overflow-wrap:anywhere;color:#243e35;margin:5px 0}
+    .stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.pill{background:#edf4f0;border-radius:99px;padding:5px 10px;font-size:13px;color:#355a4d}
+    label{display:block;font-weight:600;font-size:14px;margin:11px 0 5px}input,select{font:inherit;width:100%;padding:10px 11px;border:1px solid #cfdcd5;border-radius:8px;background:white;color:#1d302b}
+    input:focus,select:focus{outline:2px solid #a9d4bf;border-color:#5c9d7c}.check{display:flex;gap:9px;align-items:flex-start;font-weight:400;margin:12px 0}.check input{width:auto;margin:3px 0 0}
+    .company-list{display:grid;gap:6px;max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fbfdfc}
+    .company-option{display:flex;gap:9px;align-items:flex-start;font-weight:400;margin:0}.company-option input{width:auto;margin:3px 0 0}
+    button{font:600 14px "Segoe UI",Arial,sans-serif;border:0;border-radius:8px;background:var(--green);color:#fff;padding:11px 15px;cursor:pointer;margin-top:12px}
+    button.secondary{background:#e8f0ec;color:var(--ink);border:1px solid var(--line)}button.danger{background:#fff;color:var(--red);border:1px solid #e8c8c8}
+    button:disabled{opacity:.48;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:150px}
+    table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid #edf1ef;vertical-align:top}th{color:var(--muted);font-weight:600}
+    #credentials{border:1px solid #acd2bb;background:#f1fbf4;border-radius:10px;padding:14px;margin-top:16px;overflow-wrap:anywhere}
+    #credentials code{display:block;background:white;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:16px;margin-top:5px;user-select:all}
+    .hidden{display:none!important}footer{max-width:1180px;margin:0 auto;padding:0 18px 24px;color:var(--muted);font-size:12px}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}header{padding:22px 18px}main{margin-top:14px}.card{padding:16px}}
+  </style>
+</head>
+<body data-mode="__MODE__">
+  <header><h1>NYC Gestão — Contas e acessos</h1><p>Crie contas e escolha a área e as empresas que cada pessoa poderá acessar.</p></header>
+  <main>
+    <div class="notice warning">Confira a base antes de criar uma conta. Proprietário tem acesso total à plataforma. As outras opções limitam o acesso por empresa e função.</div>
+    <section class="card" aria-labelledby="database-title">
+      <h2 id="database-title">Base selecionada</h2>
+      <div id="db-path" class="database-path">Verificando base...</div>
+      <div id="db-source" class="muted"></div>
+      <div id="stats" class="stats"></div>
+      <p id="db-message" class="muted"></p>
+      <h3>Contas do Painel Central encontradas</h3>
+      <div style="overflow:auto"><table><thead><tr><th>E-mail</th><th>Tipo</th><th>Status</th><th>Empresas autorizadas</th></tr></thead><tbody id="accounts"><tr><td colspan="4">Carregando...</td></tr></tbody></table></div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="create-section">
+        <h2>Criar uma conta</h2>
+        <form id="create-form">
+          <label for="type">Tipo de acesso</label>
+          <select id="type" name="type">
+            <option value="employee">Funcionário de uma empresa</option>
+            <option value="platform">Conta da plataforma — empresas selecionadas</option>
+            <option value="owner">Proprietário da Central de Controle — acesso total</option>
+          </select>
+          <p id="type-help" class="muted"></p>
+
+          <div id="email-fields">
+            <label for="email">E-mail de acesso</label>
+            <input id="email" name="email" type="email" maxlength="200" autocomplete="off" placeholder="nome@gmail.com">
+          </div>
+
+          <div id="platform-companies" class="hidden">
+            <label>Empresas autorizadas</label>
+            <div id="company-checks" class="company-list"></div>
+            <p class="muted">Esse usuário entra na página inicial do sistema e só vê as empresas marcadas. Não recebe acesso a /controle nem substitui o login de funcionário. O sistema exige Gmail para esse tipo de conta.</p>
+          </div>
+
+          <div id="employee-fields" class="hidden">
+            <div class="row">
+              <div><label for="username">Usuário</label><input id="username" maxlength="100" autocomplete="off" placeholder="Ex.: vendas01"></div>
+              <div><label for="full-name">Nome da pessoa</label><input id="full-name" maxlength="140" placeholder="Nome completo"></div>
+            </div>
+            <div class="row">
+              <div><label for="employee-company">Empresa</label><select id="employee-company"></select></div>
+              <div><label for="employee-role">Função</label><select id="employee-role"><option value="user">Operador — rotina diária</option><option value="admin">Admin — administra esta empresa</option></select></div>
+            </div>
+            <p class="muted">Funcionário entra pelo sistema da empresa usando código da empresa, usuário e senha provisória.</p>
+          </div>
+
+          <label id="owner-confirm-wrap" class="check hidden"><input id="owner-confirm" type="checkbox"><span>Entendo que Proprietário poderá acessar e administrar todas as empresas e contas.</span></label>
+          <label class="check"><input id="base-confirm" type="checkbox"><span>Conferi o caminho e os dados da base acima; é a instalação onde quero criar esta conta.</span></label>
+          <button id="create-button" type="submit" disabled>Criar conta e gerar senha provisória</button>
+        </form>
+        <div id="credentials" class="hidden" aria-live="polite">
+          <strong>Acesso criado. Copie a senha provisória agora.</strong>
+          <p id="created-login"></p><p id="created-type"></p><p id="created-companies"></p>
+          <code id="temporary-password"></code>
+          <button id="copy-password" class="secondary" type="button">Copiar senha</button>
+          <p class="muted">A senha é exibida uma vez e deverá ser trocada no primeiro acesso.</p>
+        </div>
+        <p id="create-message" aria-live="polite"></p>
+      </section>
+
+      <section class="card" id="recovery-section">
+        <h2>Recuperar acesso da Central</h2>
+        <p class="muted">Selecione um proprietário existente e defina uma nova senha com pelo menos 12 caracteres. Para criar o primeiro proprietário, use essa opção no campo “Tipo de acesso”.</p>
+        <form id="recovery-form">
+          <label for="owner-email">Proprietário</label>
+          <select id="owner-email"></select>
+          <label for="new-password">Nova senha</label>
+          <input id="new-password" type="password" minlength="12" autocomplete="new-password">
+          <label for="repeat-password">Repita a nova senha</label>
+          <input id="repeat-password" type="password" minlength="12" autocomplete="new-password">
+          <label class="check"><input id="recovery-confirm" type="checkbox"><span>Conferi o e-mail do proprietário e a base selecionada acima.</span></label>
+          <button id="recover-button" type="submit" disabled>Redefinir senha</button>
+        </form>
+        <p id="recovery-message" aria-live="polite"></p>
+      </section>
+    </div>
+    <div class="row"><button id="stop-button" class="danger" type="button">Encerrar ferramenta local</button></div>
+  </main>
+  <footer>A ferramenta Python escuta somente neste computador. Senhas de contas novas são guardadas no banco como hash e a senha provisória deve ser trocada no primeiro acesso.</footer>
+  <script>
+    const tokenFromUrl = new URLSearchParams(location.search).get('token');
+    if (tokenFromUrl) sessionStorage.setItem('nycAccessToken', tokenFromUrl);
+    const accessToken = tokenFromUrl || sessionStorage.getItem('nycAccessToken') || '';
+    history.replaceState({}, '', '/');
+    const mode = document.body.dataset.mode;
+    let currentStatus = null;
+    const $ = (id) => document.getElementById(id);
+
+    async function api(path, body) {
+      const response = await fetch(path, {
+        method: body === undefined ? 'GET' : 'POST',
+        headers: {'X-Setup-Token': accessToken, ...(body === undefined ? {} : {'Content-Type': 'application/json'})},
+        body: body === undefined ? undefined : JSON.stringify(body),
+        cache: 'no-store'
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Não foi possível concluir a solicitação.');
+      return result;
+    }
+
+    function textRow(parent, values) {
+      const row = document.createElement('tr');
+      values.forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.appendChild(cell);
+      });
+      parent.appendChild(row);
+    }
+
+    async function refreshStatus() {
+      try {
+        const data = await api('/api/status');
+        currentStatus = data;
+        $('db-path').textContent = 'Banco: ' + data.database;
+        $('db-source').textContent = 'Configuração carregada de: ' + data.source;
+        $('db-message').textContent = 'Confira se esse caminho e esses dados correspondem à instalação do /controle.';
+        $('stats').replaceChildren();
+        Object.entries(data.counts || {}).forEach(([name, count]) => {
+          const pill = document.createElement('span'); pill.className = 'pill'; pill.textContent = `${count} ${name}`; $('stats').appendChild(pill);
+        });
+        const employeePill = document.createElement('span'); employeePill.className = 'pill'; employeePill.textContent = `${data.employee_count} funcionários`; $('stats').appendChild(employeePill);
+
+        const companyNames = new Map((data.companies || []).map(c => [c.id, `${c.name} (${c.code})`]));
+        const accountBody = $('accounts'); accountBody.replaceChildren();
+        if (!data.accounts.length) textRow(accountBody, ['Nenhuma conta do Painel Central', '—', '—', '—']);
+        data.accounts.forEach(account => {
+          const companies = account.type.startsWith('Proprietário') ? 'Todas' : account.companies.map(id => companyNames.get(id) || `Empresa ${id}`).join(', ');
+          textRow(accountBody, [account.email, account.type, account.active ? 'Ativa' : 'Inativa', companies || 'Nenhuma empresa']);
+        });
+
+        const checks = $('company-checks'); checks.replaceChildren();
+        const employeeCompany = $('employee-company'); employeeCompany.replaceChildren();
+        if (!data.companies.length) {
+          const empty = document.createElement('p'); empty.className = 'muted'; empty.textContent = 'Nenhuma empresa ativa encontrada. Crie uma empresa antes de liberar acesso limitado ou funcionário.'; checks.appendChild(empty);
+          const option = document.createElement('option'); option.value = ''; option.textContent = 'Nenhuma empresa ativa'; employeeCompany.appendChild(option);
+        } else {
+          data.companies.forEach(company => {
+            const label = document.createElement('label'); label.className = 'company-option';
+            const input = document.createElement('input'); input.type = 'checkbox'; input.value = String(company.id);
+            const span = document.createElement('span'); span.textContent = `${company.name} (${company.code})`;
+            label.append(input, span); checks.appendChild(label);
+            const option = document.createElement('option'); option.value = String(company.id); option.textContent = `${company.name} (${company.code})`; employeeCompany.appendChild(option);
+          });
+        }
+        const ownerSelect = $('owner-email'); ownerSelect.replaceChildren();
+        (data.owners || []).forEach(email => { const option = document.createElement('option'); option.value = email; option.textContent = email; ownerSelect.appendChild(option); });
+        if (!data.owners.length) { const option = document.createElement('option'); option.value = ''; option.textContent = 'Nenhum proprietário — crie no formulário ao lado'; ownerSelect.appendChild(option); }
+        $('recover-button').disabled = !data.owners.length || !$('recovery-confirm').checked;
+        updateType();
+      } catch (error) {
+        $('db-path').textContent = 'Não foi possível validar a base configurada.';
+        $('db-source').textContent = '';
+        $('db-message').textContent = error.message;
+        $('db-message').className = 'error';
+      }
+    }
+
+    function updateType() {
+      const type = $('type').value;
+      $('email-fields').classList.toggle('hidden', type === 'employee');
+      $('employee-fields').classList.toggle('hidden', type !== 'employee');
+      $('platform-companies').classList.toggle('hidden', type !== 'platform');
+      $('owner-confirm-wrap').classList.toggle('hidden', type !== 'owner');
+      const messages = {
+        owner: 'Proprietário pode administrar toda a plataforma e todas as empresas.',
+        platform: 'Conta da plataforma vê somente as empresas marcadas; não recebe acesso a /controle. O sistema exige Gmail para esse perfil.',
+        employee: 'Funcionário entra com código da empresa, usuário e senha provisória.'
+      };
+      $('type-help').textContent = messages[type];
+      updateCreateButton();
+    }
+
+    function updateCreateButton() {
+      const ownerOk = $('type').value !== 'owner' || $('owner-confirm').checked;
+      $('create-button').disabled = !$('base-confirm').checked || !ownerOk || !currentStatus;
+    }
+
+    $('type').addEventListener('change', updateType);
+    $('base-confirm').addEventListener('change', updateCreateButton);
+    $('owner-confirm').addEventListener('change', updateCreateButton);
+    $('recovery-confirm').addEventListener('change', () => { $('recover-button').disabled = !currentStatus?.owners?.length || !$('recovery-confirm').checked; });
+    $('employee-role').addEventListener('change', () => {});
+
+    $('create-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const type = $('type').value;
+      if (type === 'owner' && !confirm('Este usuário terá acesso total à Central de Controle e a todas as empresas. Deseja continuar?')) return;
+      const payload = {type};
+      if (type !== 'employee') payload.email = $('email').value.trim();
+      if (type === 'platform') payload.company_ids = [...$('company-checks').querySelectorAll('input:checked')].map(input => Number(input.value));
+      if (type === 'employee') {
+        payload.username = $('username').value.trim();
+        payload.full_name = $('full-name').value.trim();
+        payload.company_id = Number($('employee-company').value) || null;
+        payload.employee_role = $('employee-role').value;
+      }
+      $('create-button').disabled = true;
+      $('create-message').textContent = 'Criando conta...'; $('create-message').className = 'muted';
+      try {
+        const result = await api('/api/create', payload);
+        $('created-login').textContent = 'Login: ' + result.login;
+        $('created-type').textContent = 'Acesso: ' + result.type;
+        $('created-companies').textContent = 'Empresas: ' + (result.companies.length ? result.companies.join(', ') : 'Todas');
+        $('temporary-password').textContent = result.temporary_password;
+        $('credentials').classList.remove('hidden');
+        $('create-message').textContent = 'Conta criada. Copie a senha provisória antes de fechar esta página.'; $('create-message').className = 'success';
+        $('email').value = ''; $('username').value = ''; $('full-name').value = '';
+        $('company-checks').querySelectorAll('input').forEach(input => input.checked = false);
+        $('base-confirm').checked = false; $('owner-confirm').checked = false;
+        await refreshStatus(); updateCreateButton();
+      } catch (error) {
+        $('create-message').textContent = error.message; $('create-message').className = 'error';
+        updateCreateButton();
+      }
+    });
+
+    $('copy-password').addEventListener('click', async () => {
+      const password = $('temporary-password').textContent;
+      try { await navigator.clipboard.writeText(password); $('copy-password').textContent = 'Copiada'; }
+      catch { $('temporary-password').focus(); window.getSelection().selectAllChildren($('temporary-password')); $('copy-password').textContent = 'Selecione e copie'; }
+    });
+
+    $('recovery-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const password = $('new-password').value;
+      const repeated = $('repeat-password').value;
+      if (password.length < 12) { $('recovery-message').textContent = 'Use pelo menos 12 caracteres.'; $('recovery-message').className = 'error'; return; }
+      if (password !== repeated) { $('recovery-message').textContent = 'As senhas não conferem.'; $('recovery-message').className = 'error'; return; }
+      $('recover-button').disabled = true;
+      try {
+        const result = await api('/api/recover-owner', {email: $('owner-email').value, password});
+        $('new-password').value = ''; $('repeat-password').value = ''; $('recovery-confirm').checked = false;
+        $('recovery-message').textContent = `Senha redefinida para ${result.email}. Use-a no /controle.`; $('recovery-message').className = 'success';
+        await refreshStatus();
+      } catch (error) {
+        $('recovery-message').textContent = error.message; $('recovery-message').className = 'error';
+        $('recover-button').disabled = !currentStatus?.owners?.length || !$('recovery-confirm').checked;
+      }
+    });
+
+    $('stop-button').addEventListener('click', async () => {
+      try { await api('/api/stop', {}); } catch {}
+      sessionStorage.removeItem('nycAccessToken');
+      document.body.innerHTML = '<main><section class="card"><h1>Ferramenta encerrada</h1><p>Você pode fechar esta aba e a janela do Python.</p></section></main>';
+    });
+
+    refreshStatus();
+    if (mode === 'recover') $('recovery-section').scrollIntoView({behavior:'smooth'});
+    if (mode === 'create') { $('type').value='owner'; updateType(); $('create-section').scrollIntoView({behavior:'smooth'}); }
+  </script>
+</body>
+</html>
