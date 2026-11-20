@@ -1,0 +1,9 @@
+NYC GESTÃO DESKTOP 21.1.2 (WINDOWS)
+O instalador gerado empacota runtime Python, bibliotecas e GUI no próprio EXE Setup.
+O PC do usuário NÃO precisa baixar nem instalar Python, pip ou dependências.
+A interface é Tkinter/ttk desktop nativa; o backend FastAPI é executado em memória
+usando TestClient, sem navegador nem porta HTTP pública.
+Dados do usuário: %APPDATA%\NYC-Gestao\nycweb_v2.db.
+Desinstalação mantém o banco e os backups.
+O sistema original foi portado, mas testes finais em Windows, impressão e PIX são necessários.
+O arquivo não tem assinatura de editor, então o Windows pode exibir alerta SmartScreen.
